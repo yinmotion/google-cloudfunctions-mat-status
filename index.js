@@ -1,7 +1,7 @@
 'use strict';
 
-exports.http = (request, response) => {
-  response.status(200).send('Hello World!');
+exports.CheckMTAStatus = (request, response) => {
+  response.status(200).send('Check MTA Status!');
 };
 
 exports.event = (event, callback) => {
