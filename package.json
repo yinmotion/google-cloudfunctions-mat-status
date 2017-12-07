@@ -9,6 +9,16 @@
   "author": "Yinmotion",
   "license": "MIT",
   "dependencies": {
+    "actions-on-google": "^1.6.1",
+    "bluebird": "^3.5.1",
+    "firebase-admin": "^5.5.1",
+    "firebase-functions": "^0.7.3",
+    "lodash": "^4.17.4",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "serverless-google-cloudfunctions": "^1.1.0"
+  },
+  "devDependencies": {
+    "serverless": "^1.24.1"
   }
 }

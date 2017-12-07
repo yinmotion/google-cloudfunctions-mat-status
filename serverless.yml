@@ -20,7 +20,7 @@ package:
 
 functions:
   first:
-    handler: CheckMTAStatus
+    handler: mtaStatus
     events:
       - http: path
 
