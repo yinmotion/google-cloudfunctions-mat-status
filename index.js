@@ -8,8 +8,6 @@ const Promise = require('bluebird');
 
 const App = require('./app');
 
-const TEST_USER_ID = 'user-123456'
-
 const Actions = {
   WELCOME_INTENT : 'input.welcome',
   REQUEST_PERMISSION_ACTION: 'request_permission',
@@ -18,6 +16,8 @@ const Actions = {
   GET_ADDRESS: 'get_address',
   INPUT_SUBWAY_LINE: 'input_subway_line'
 }
+
+var userId;
 
 exports.mtaStatus = (req, res) => {
   console.log(`Headers: ${JSON.stringify(req.headers)}`);
@@ -39,28 +39,16 @@ exports.mtaStatus = (req, res) => {
     let user = flowApp.getUser();
     console.log('user = ' + user);
     if(user){
-      let userId = user.userId;
+      userId = user.userId;
       console.log('user id = ' + userId);
     }
 
     flowApp.ask('Welcome!');
-
-    let checkUserStationsPromise = new Promise((resolve, reject) => {
-      App.checkUserStations(userId, resolve, reject);
-    })
-
-    checkUserStationsPromise
-    .the((userStations)=>{
-      
-    })
-    .catch((error) =>{
-
-    })
     //requestPermission(flowApp);
   };
 
   function requestPermission(flowApp) {
-    console.log("!!! requestPermission !!!");
+    console.log("*** mtaStatus : requestPermission ***");
     const permission = flowApp.SupportedPermissions.DEVICE_PRECISE_LOCATION;
 
     flowApp.askForPermission('To find subway stations near you', permission);
@@ -70,7 +58,7 @@ exports.mtaStatus = (req, res) => {
     console.log("*** onGetAddress ***");
     if(flowApp.isPermissionGranted()){
       console.log('address = ' + flowApp.getDeviceLocation().address);
-      flowApp.tell('I got your address, looking for subway stations near you now')
+      flowApp.ask('I got your address, looking for subway stations near you now')
     }else{
       flowApp.tell("I can't find any station near you");  
     }
@@ -81,11 +69,27 @@ exports.mtaStatus = (req, res) => {
   }
 */
   function checkMTAStatus(flowApp){
-    requestPermission(flowApp);
-    //flowApp.tell('Checking status now');
-    //response.status(200).send('Check MTA Status!');
-  }
+    let checkUserStationsPromise = new Promise((resolve, reject) => {
+      //Test user id
+      //let userId = 'device-12345';
+      App.checkUserStations(userId, resolve, reject);
+    });
 
+    checkUserStationsPromise
+    .then((userStations)=>{
+      console.log('!!! mtaStatus : checkUserStationsPromise : userStations = ' + userStations + ' !!!');
+      if(userStations){
+        console.log('mtaStatus : checkMTAStatus');
+        //requestPermission(flowApp);
+        flowApp.tell('Checking status now');
+      }else{
+        requestPermission(flowApp);
+      }
+    })
+    .catch((error) =>{
+      console.log('!!! mtaStatus : checkUserStationsPromise : ' + error + ' !!!');
+    })
+  }
 };
 
 exports.event = (event, callback) => {

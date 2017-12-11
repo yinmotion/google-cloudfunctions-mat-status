@@ -7,9 +7,9 @@ provider:
   # the path to the credentials file needs to be absolute
   credentials: ~/.gcloud/Google Home MTA Status-keys.json
 
-environment:
-  firebase_credentials: ~/.gcloud/home-mta-status-firebase-adminsdk-key.json  
-  firebase_db_url: https://home-mta-status.firebaseio.com
+  environment:
+    firebase_credentials: ./keys/home-mta-status-firebase-adminsdk-key.json  
+    firebase_db_url: https://home-mta-status.firebaseio.com
 
 plugins:
   - serverless-google-cloudfunctions

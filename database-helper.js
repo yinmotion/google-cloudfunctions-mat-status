@@ -1,18 +1,17 @@
 "use strict";
 
-const firebase = require('firebase-admin');
 const _ = require("lodash");
 const Promise = require("bluebird");
 
-var serviceAccount = require(process.env.firebase_credentials);
+const firebase = require('firebase-admin');
+var serviceAccount = require('./keys/home-mta-status-firebase-adminsdk-key.json');
 
 firebase.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.firebase_db_url
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: 'https://home-mta-status.firebaseio.com'
 });
 
 var database = firebase.database();
-
 
 const DBhelper = {
     getUserStationById: function(userId, resolve, reject) {
@@ -20,7 +19,16 @@ const DBhelper = {
     },
 
     checkUserRecord: function(userId, resolve, reject){
-        
+        console.log('DBhelper : checkUserRecord userId = ' + userId);
+
+        database.ref('/userstations/' + userId).once('value')
+        .then(function(snapshot){
+          console.log('DBhelper : checkUserRecord stations  = ' + JSON.stringify(snapshot.val()));
+          resolve(snapshot.val());
+        })
+        .catch((error)=>{
+          reject(error);
+        })
     }
 }
 
