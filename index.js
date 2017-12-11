@@ -4,6 +4,7 @@ process.env.DEBUG = 'actions-on-google:*';
 
 const { DialogflowApp } = require('actions-on-google');
 const functions = require('firebase-functions');
+const Promise = require('bluebird');
 
 const App = require('./app');
 
@@ -30,18 +31,31 @@ exports.mtaStatus = (req, res) => {
   actionMap.set(Actions.WELCOME_INTENT, welcomeIntent);
   actionMap.set(Actions.REQUEST_PERMISSION_ACTION, requestPermission);
   actionMap.set(Actions.GET_ADDRESS, onGetAddress);
-  actionMap.set(Actions.INPUT_SUBWAY_LINE, inputSubwayLine);
+  //actionMap.set(Actions.INPUT_SUBWAY_LINE, inputSubwayLine);
 
   flowApp.handleRequest(actionMap);
 
   function welcomeIntent(flowApp) {
     let user = flowApp.getUser();
+    console.log('user = ' + user);
     if(user){
       let userId = user.userId;
+      console.log('user id = ' + userId);
     }
 
-    flowApp.ask('Welcome, which train? ');
+    flowApp.ask('Welcome!');
 
+    let checkUserStationsPromise = new Promise((resolve, reject) => {
+      App.checkUserStations(userId, resolve, reject);
+    })
+
+    checkUserStationsPromise
+    .the((userStations)=>{
+      
+    })
+    .catch((error) =>{
+
+    })
     //requestPermission(flowApp);
   };
 
@@ -55,16 +69,17 @@ exports.mtaStatus = (req, res) => {
   function onGetAddress(flowApp) {
     console.log("*** onGetAddress ***");
     if(flowApp.isPermissionGranted()){
+      console.log('address = ' + flowApp.getDeviceLocation().address);
       flowApp.tell('I got your address, looking for subway stations near you now')
     }else{
       flowApp.tell("I can't find any station near you");  
     }
   }
-
+  /*
   function inputSubwayLine(flowApp) {
     
   }
-
+*/
   function checkMTAStatus(flowApp){
     requestPermission(flowApp);
     //flowApp.tell('Checking status now');
