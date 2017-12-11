@@ -11,13 +11,16 @@ firebase.initializeApp({
   databaseURL: process.env.firebase_db_url
 });
 
+var database = firebase.database();
+
+
 const DBhelper = {
     getUserStationById: function(userId, resolve, reject) {
 
     },
 
     checkUserRecord: function(userId, resolve, reject){
-
+        
     }
 }
 
