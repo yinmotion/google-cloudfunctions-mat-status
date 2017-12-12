@@ -37,6 +37,9 @@ var stationName;
 //Echo device ID from Alexa Skill event context
 var deviceId;
 
+var address;
+var userStations;
+
 var App = {
     checkUserStations : function(userId, resolve, reject){
         console.log('*** App : checkUserStations ***');
@@ -49,8 +52,14 @@ var App = {
         trainLine = appObj.line;
         direction = appObj.direction;
         deviceId = appObj.deviceId;
-        //accessToken = appObj.accessToken;
-        //apiEndpoint = appObj.apiEndpoint;
+        address = appObj.address;
+        userStations = appObj.userStations;
+        
+        if(userStations){
+            //Get user stations based on address
+        }else{
+            //
+        }
     
         trainNumber = trainLine.split(" ")[0];
     

@@ -24,8 +24,13 @@ const Inputs = {
 
 var userId;
 
+var user_address;
+
 var user_train_direction;
 var user_subway_line_name;
+
+//user's stations list from DB
+var user_stations;
 
 exports.mtaStatus = (req, res) => {
   console.log(`Headers: ${JSON.stringify(req.headers)}`);
@@ -67,7 +72,11 @@ exports.mtaStatus = (req, res) => {
     console.log("*** onGetAddress ***");
 
     if(flowApp.isPermissionGranted()){
-      console.log('address = ' + flowApp.getDeviceLocation().address);
+
+      user_address = flowApp.getDeviceLocation().address;
+
+      console.log('!!! onGetAddress : address = ' + user_address);
+
       flowApp.ask('I got your address, looking for subway stations near you now');
 
       //console.log('!!! onGetAddress : useId = ' + userId + ' !!!');
@@ -75,6 +84,13 @@ exports.mtaStatus = (req, res) => {
       //*
       
       let getNextArrivalTimePromise = new Promise((resolve, reject) => {
+        let appObj = {};
+        appObj.line = user_subway_line_name;
+        appObj.direction = user_train_direction;
+        appObj.deviceId = userId;
+        appObj.address = user_address;
+        appObj.userStations = user_stations;
+
         App.getNextArrivalTime(appObj, resolve, reject);
       });
 
@@ -87,7 +103,7 @@ exports.mtaStatus = (req, res) => {
       .catch((error) => {
         console.log('App.getNextArrivalTime : error = ' + error);
       });
-      */
+      //*/
     }else{
       flowApp.tell("I can't find any station near you");  
     }
@@ -118,9 +134,11 @@ exports.mtaStatus = (req, res) => {
     checkUserStationsPromise
     .then((userStations)=>{
       console.log('!!! mtaStatus : checkUserStationsPromise : userStations = ' + userStations + ' !!!');
+
+      user_stations = userStations;
+
       if(userStations){
-        console.log('mtaStatus : checkMTAStatus');
-        //requestPermission(flowApp);
+        //console.log('mtaStatus : checkMTAStatus');
         flowApp.tell('Checking status now');
       }else{
         requestPermission(flowApp);
