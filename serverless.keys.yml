@@ -1,0 +1,6 @@
+dev:
+  googleMapsAPIkey: 'AIzaSyBVqsCgzlFaE8wxWXMtkC5gzJ7Wb1KgsUE'
+  mtaAPIkey: '6c2cdead4118f35fe1ed1a3604e37ffb'
+prd:
+  googleMapsAPIkey: 'AIzaSyBVqsCgzlFaE8wxWXMtkC5gzJ7Wb1KgsUE'
+  mtaAPIkey: '6c2cdead4118f35fe1ed1a3604e37ffb'

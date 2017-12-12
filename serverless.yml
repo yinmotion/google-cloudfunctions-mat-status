@@ -10,10 +10,19 @@ provider:
   environment:
     firebase_credentials: ./keys/home-mta-status-firebase-adminsdk-key.json  
     firebase_db_url: https://home-mta-status.firebaseio.com
+    stage: ${opt:stage, self:custom.defaultStage}
+    googleMapsAPIurl: https://maps.googleapis.com/maps/api/geocode/json
+    googleMapsDistanceAPIurl: https://maps.googleapis.com/maps/api/distancematrix/json?mode=walking&units=imperial
+    googleMapsAPIkey: ${file(./serverless.keys.yml):${self:provider.stage}.googleMapsAPIkey}
+    mtaAPIURL: http://datamine.mta.info/mta_esi.php
+    mtaAPIkey: ${file(./serverless.keys.yml):${self:provider.stage}.mtaAPIkey}
 
 plugins:
   - serverless-google-cloudfunctions
 
+custom:
+  defaultStage: dev
+  
 # needs more granular excluding in production as only the serverless provider npm
 # package should be excluded (and not the whole node_modules directory)
 package:

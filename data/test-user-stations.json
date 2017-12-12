@@ -1,0 +1,147 @@
+[
+	{
+		"stopID": "R20",
+		"distance": "0.2",
+		"duration": "5 mins"
+	},
+	{
+		"stopID": "D19",
+		"distance": "0.2",
+		"duration": "5 mins"
+	},
+	{
+		"stopID": "L02",
+		"distance": "0.3",
+		"duration": "6 mins"
+	},
+	{
+		"stopID": "L03",
+		"distance": "0.3",
+		"duration": "6 mins"
+	},
+	{
+		"stopID": 635,
+		"distance": "0.3",
+		"duration": "7 mins"
+	},
+	{
+		"stopID": "R19",
+		"distance": "0.3",
+		"duration": "7 mins"
+	},
+	{
+		"stopID": "D18",
+		"distance": "0.4",
+		"duration": "9 mins"
+	},
+	{
+		"stopID": 131,
+		"distance": "0.4",
+		"duration": "7 mins"
+	},
+	{
+		"stopID": 634,
+		"distance": "0.5",
+		"duration": "9 mins"
+	},
+	{
+		"stopID": 132,
+		"distance": "0.5",
+		"duration": "11 mins"
+	},
+	{
+		"stopID": 130,
+		"distance": "0.6",
+		"duration": "12 mins"
+	},
+	{
+		"stopID": "A31",
+		"distance": "0.6",
+		"duration": "11 mins"
+	},
+	{
+		"stopID": "R18",
+		"distance": "0.6",
+		"duration": "12 mins"
+	},
+	{
+		"stopID": "R21",
+		"distance": "0.6",
+		"duration": "13 mins"
+	},
+	{
+		"stopID": "L01",
+		"distance": "0.6",
+		"duration": "13 mins"
+	},
+	{
+		"stopID": "L05",
+		"distance": "0.6",
+		"duration": "12 mins"
+	},
+	{
+		"stopID": 636,
+		"distance": "0.7",
+		"duration": "14 mins"
+	},
+	{
+		"stopID": 633,
+		"distance": "0.7",
+		"duration": "14 mins"
+	},
+	{
+		"stopID": "A32",
+		"distance": "0.7",
+		"duration": "14 mins"
+	},
+	{
+		"stopID": "A30",
+		"distance": "0.8",
+		"duration": "17 mins"
+	},
+	{
+		"stopID": "L06",
+		"distance": "0.8",
+		"duration": "17 mins"
+	},
+	{
+		"stopID": 133,
+		"distance": "0.8",
+		"duration": "16 mins"
+	},
+	{
+		"stopID": "R17",
+		"distance": "0.9",
+		"duration": "18 mins"
+	},
+	{
+		"stopID": 632,
+		"distance": "0.9",
+		"duration": "19 mins"
+	},
+	{
+		"stopID": "D17",
+		"distance": "0.9",
+		"duration": "18 mins"
+	},
+	{
+		"stopID": 129,
+		"distance": "0.9",
+		"duration": "17 mins"
+	},
+	{
+		"stopID": 128,
+		"distance": "1.0",
+		"duration": "20 mins"
+	},
+	{
+		"stopID": "D21",
+		"distance": "1.0",
+		"duration": "21 mins"
+	},
+	{
+		"stopID": 637,
+		"distance": "1.0",
+		"duration": "20 mins"
+	}
+]

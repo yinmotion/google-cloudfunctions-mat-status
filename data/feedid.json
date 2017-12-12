@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "version": "prod",
+    "trainLines": "1,2,3,4,5,6,S"
+  },
+  {
+    "id": "26",
+    "version": "beta",
+    "trainLines": "A,C,E"
+  },
+  {
+    "id": "16",
+    "version": "beta",
+    "trainLines": "N,Q,R,W"
+  },
+  {
+    "id": "21",
+    "version": "beta",
+    "trainLines": "B,D,F,M"
+  },
+  {
+    "id": "2",
+    "version": "beta",
+    "trainLines": "L"
+  },
+  {
+    "id": "11",
+    "version": "beta",
+    "trainLines": "SIR"
+  },
+  {
+    "id": "31",
+    "version": "beta",
+    "trainLines": "G"
+  },
+  {
+    "id": "36",
+    "version": "beta",
+    "trainLines": "J,Z"
+  }
+]
