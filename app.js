@@ -1,5 +1,7 @@
 'use strict';
 
+const GtfsRealtimeBindings = require("gtfs-realtime-bindings");
+const request = require("request");
 const _ = require("lodash");
 const Promise = require("bluebird");
 
@@ -10,9 +12,11 @@ const feedIDs = require("./data/feedid.json");
 //All MTA stations JSON
 const ALL_STATIONS = require("./data/stations-by-borough.json");
 
-const GeocodingUtil = require("./geocoding-util");
+//API Keys
+const apiKeys = require('./keys/api-keys.json');
 
 const Values = require("./res/values");
+
 
 //MTA real-time feed API URL
 var mtaURL; 
@@ -54,12 +58,6 @@ var App = {
         deviceId = appObj.deviceId;
         address = appObj.address;
         userStations = appObj.userStations;
-        
-        if(userStations){
-            //Get user stations based on address
-        }else{
-            //
-        }
     
         trainNumber = trainLine.split(" ")[0];
     
@@ -69,20 +67,29 @@ var App = {
     
         let getStation = new Promise((resolve, reject) => {
           console.log("App.getNextArrivalTime : deviceId = " + appObj.deviceId);
-          DBhelper.getStationsById(appObj, resolve, reject);
+          console.log("App.getNextArrivalTime : userStations = " + userStations);
+          if(userStations){
+            resolve(userStations);
+          }else{
+            DBhelper.getStationsById(appObj, resolve, reject);
+          }
         });
     
         getStation
           .then((stations) => {
+            console.log('!!! App.getNextArrivalTime.getStation stations = ' + JSON.stringify(stations));  
             /*
             console.log("App.getNextArrivalTime : stations = " + stations[0].duration);
             */
             let stationID = App.getUserStationByTrainLine(stations);
             
-            console.log('stationID = ' + stationID);
+            console.log('!!! App.getNextArrivalTime.getStation : stationID = ' + stationID);
+            
             return new Promise((resolve, reject) => {
+              console.log('@@@ getStation call App.getFeed @@@')  
               App.getFeed(stationID, resolve, reject);
             })
+            
           })
           .then((aArrivals) => {
             console.log('App.getStation : aArrivals = ' + aArrivals);
@@ -126,18 +133,19 @@ var App = {
          */
         for (var i = 0; i < userStations.length; i++) {
           var stopId = userStations[i].stopID;
-          console.log("getUserStationByTrainLine : stopId = " + stopId);
+          //console.log("getUserStationByTrainLine : stopId = " + stopId);
           _.filter(ALL_STATIONS, function(borough) {
             let obj = _.filter(borough.stations, ["GTFS Stop ID", stopId])[0];
             //console.log("getUserStationByTrainLine : obj = " + obj);
             if (obj !== undefined) {
               //console.log("getUserStationByTrainLine : obj = " + JSON.stringify(obj));
               let lines = obj["Daytime Routes"].toString().toLowerCase();
-              console.log('getUserStationByTrainLine : lines = ' + lines);
+              console.log('!!! getUserStationByTrainLine : trainNumber = ' + trainNumber);
+              console.log('!!! getUserStationByTrainLine : lines = ' + lines);
               
               if (lines.indexOf(trainNumber) >= 0) {
-                //console.log("getUserStationByTrainLine : station = " + JSON.stringify(obj));
-                //console.log("getUserStationByTrainLine : lines : " + lines);
+                console.log("getUserStationByTrainLine : station = " + JSON.stringify(obj));
+                console.log("getUserStationByTrainLine : lines : " + lines);
                 station = obj;
               }
             }
@@ -196,8 +204,8 @@ var App = {
         }
         console.log("App getFeed : feed_id = " + feedId);
     
-        mtaURL = process.env.mtaAPIURL;  
-        mtaAPIkey = process.env.mtaAPIkey;
+        mtaURL = 'http://datamine.mta.info/mta_esi.php';//process.env.mtaAPIURL;  
+        mtaAPIkey = apiKeys.dev.mtaAPIkey;//process.env.mtaAPIkey;
     
         let requestSettings = {
           method: "GET",

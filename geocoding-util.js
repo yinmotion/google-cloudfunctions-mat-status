@@ -6,18 +6,17 @@ const fs = require("fs");
 const Promise = require('bluebird');
 const rp = require('request-promise');
 
-const mapsAPIurl = process.env.googleMapsAPIurl;
-const distanceAPIurl = process.env.googleMapsDistanceAPIurl;
+const mapsAPIurl = 'https://maps.googleapis.com/maps/api/geocode/json';
+const distanceAPIurl = 'https://maps.googleapis.com/maps/api/distancematrix/json?mode=walking&units=imperial';
 
 const stationlocation = require('./data/stations-by-borough.json');
+const apiKeys = require('./keys/api-keys.json');
 
 /**
  * FOR DEV ONLY
  * static stations list sorted by distance from testAddress to union sq station 
  */
-const sortedStationJSON = require('./data/stations-sorted.json'); 
-
-var devideId;
+//const sortedStationJSON = require('./data/stations-sorted.json'); 
 
 var mapsAPIkey;
 
@@ -37,35 +36,39 @@ var requestSettings = {
 var index = 0;
 
 var GeocodingUtil = {
-    getGeoCode: function (address, id, resolve, reject) {
+    getGeoCode: function (address, resolve, reject) {
         //console.log('GeocodingUtil.getGeoCode : deviceId = ' + id);
-        devideId = id;
-
         var currStation = {};
 
         var stations_sorted = [];
 
-        mapsAPIkey = process.env.googleMapsAPIkey;
+        mapsAPIkey = apiKeys.dev.googleMapsAPIkey;
 
-        formattedAddress = address.addressLine1.split(" ").join("+") + ",+" + address.city.split(" ").join("+") + ",+" + address.stateOrRegion + "+" + address.postalCode + ",+US";
+        formattedAddress = address.split(" ").join("+");
         requestSettings.url = mapsAPIurl + "?address=" + formattedAddress + "&key=" + mapsAPIkey;
         requestSettings.json = true;
         console.log("GeocodingUtil.getGeoCode : requestSettings.url = " + requestSettings.url);
 
+        let aAddress = address.split(",");
+        let borough = aAddress[1];
+
         let getStationByBoroughPromise = new Promise((resolve, reject) => {
-            getStationsByBorough(address.city, resolve, reject);
+            getStationsByBorough(borough, resolve, reject);
         })
 
         getStationByBoroughPromise
         .then((stationsByBorough) => {
             console.log('GeocodingUtil.getGeoCode : getStationByBoroughPromise : stationsByBorough length '+ stationsByBorough.length);
-            return new Promise((resolve, reject) => {
-                getDistance(stationsByBorough, resolve, reject);
-            });
+            
+            getDistance(stationsByBorough, resolve, reject);
+            
         })
         .then((stationsSortedByDistance) => {
-            console.log('GeocodingUtil.getGeoCode : getStationByBoroughPromise : stationsSortedByDistance length' + stationsSortedByDistance.length);
+            console.log('GeocodingUtil.getGeoCode : getStationByBoroughPromise : stationsSortedByDistance length ' + stationsSortedByDistance.length);
             resolve(stationsSortedByDistance);
+        })
+        .catch((error) => {
+            reject(error);
         })
 
         /** 
@@ -187,7 +190,7 @@ var GeocodingUtil = {
     /**
      * 
      */
-    getUserStations : function(address, deviceId, resolve, reject){
+    getUserStations : function(address, resolve, reject){
         // console.log("mapsAPIurl = " + mapsAPIurl);
         // console.log("distanceAPIurl = " + distanceAPIurl);
 
@@ -196,11 +199,13 @@ var GeocodingUtil = {
         
         //*
         let getGeoCodePromise = new Promise((resolve, reject) => {
-            GeocodingUtil.getGeoCode(address, deviceId, resolve, reject);
+            GeocodingUtil.getGeoCode(address, resolve, reject);
         });
 
         getGeoCodePromise
         .then((stations_sorted) => {
+            console.log('!!! stations_sorted = ' + stations_sorted + '!!!');
+
             resolve(stations_sorted);
         })
         .catch((error) => {

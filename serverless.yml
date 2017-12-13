@@ -7,6 +7,7 @@ provider:
   # the path to the credentials file needs to be absolute
   credentials: ~/.gcloud/Google Home MTA Status-keys.json
 
+  # 12/13/17 NOTE: Google Cloud Functions does not support environment vairables 
   environment:
     firebase_credentials: ./keys/home-mta-status-firebase-adminsdk-key.json  
     firebase_db_url: https://home-mta-status.firebaseio.com
@@ -22,7 +23,7 @@ plugins:
 
 custom:
   defaultStage: dev
-  
+
 # needs more granular excluding in production as only the serverless provider npm
 # package should be excluded (and not the whole node_modules directory)
 package:

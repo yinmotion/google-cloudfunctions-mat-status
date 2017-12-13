@@ -36,6 +36,7 @@ exports.mtaStatus = (req, res) => {
   console.log(`Headers: ${JSON.stringify(req.headers)}`);
   console.log(`Body: ${JSON.stringify(req.body)}`);
 
+  console.log('env.vars = ' + process.env.mtaAPIURL);
   
   const flowApp = new DialogflowApp({request: req, response: res});
 
@@ -57,7 +58,7 @@ exports.mtaStatus = (req, res) => {
       console.log('user id = ' + userId);
     }
 
-    flowApp.ask('Welcome!');
+    flowApp.ask('Hi, which train and what direction do you want to check?');
     //requestPermission(flowApp);
   };
 
@@ -77,36 +78,42 @@ exports.mtaStatus = (req, res) => {
 
       console.log('!!! onGetAddress : address = ' + user_address);
 
-      flowApp.ask('I got your address, looking for subway stations near you now');
+      //flowApp.ask('I got your address, looking for subway stations near you now');
 
       //console.log('!!! onGetAddress : useId = ' + userId + ' !!!');
       //console.log('!!! onGetAddress : user subway_line_name = ' + user_subway_line_name + '!!!');
       //*
       
-      let getNextArrivalTimePromise = new Promise((resolve, reject) => {
-        let appObj = {};
-        appObj.line = user_subway_line_name;
-        appObj.direction = user_train_direction;
-        appObj.deviceId = userId;
-        appObj.address = user_address;
-        appObj.userStations = user_stations;
+      getArrivalTime();
 
-        App.getNextArrivalTime(appObj, resolve, reject);
-      });
-
-      getNextArrivalTimePromise
-      .then((arrivalObj) => {
-        console.log('arrivalObj.arrivalTime = ' + arrivalObj.arrivalTime);
-        //this.response.speak(`The next ` + $event.request.intent.slots.direction.value + ' ' + $event.request.intent.slots.subwaylineName.value + ' will arrive in ' + arrivalObj.arrivalTime + ' at ' + arrivalObj.stationName + ' station');
-        //this.emit(":responseReady");
-      })
-      .catch((error) => {
-        console.log('App.getNextArrivalTime : error = ' + error);
-      });
       //*/
     }else{
       flowApp.tell("I can't find any station near you");  
     }
+  };
+
+  function getArrivalTime(){
+    let getNextArrivalTimePromise = new Promise((resolve, reject) => {
+      let appObj = {};
+      appObj.line = user_subway_line_name;
+      appObj.direction = user_train_direction;
+      appObj.deviceId = userId;
+      appObj.address = user_address;
+      appObj.userStations = user_stations;
+
+      App.getNextArrivalTime(appObj, resolve, reject);
+    });
+
+    getNextArrivalTimePromise
+    .then((arrivalObj) => {
+      console.log('arrivalObj.arrivalTime = ' + arrivalObj.arrivalTime);
+      flowApp.tell(`The next ` + user_train_direction+ ' ' + user_subway_line_name + ' will arrive in ' + arrivalObj.arrivalTime + ' at ' + arrivalObj.stationName + ' station');        
+      //this.response.speak(`The next ` + $event.request.intent.slots.direction.value + ' ' + $event.request.intent.slots.subwaylineName.value + ' will arrive in ' + arrivalObj.arrivalTime + ' at ' + arrivalObj.stationName + ' station');
+      //this.emit(":responseReady");
+    })
+    .catch((error) => {
+      console.log('App.getNextArrivalTime : error = ' + error);
+    })
   }
   
   /*
@@ -117,8 +124,8 @@ exports.mtaStatus = (req, res) => {
   function checkMTAStatus(flowApp){
     console.log('*** mtaStatus : checkMTAStatus ***');
 
-    user_train_direction = JSON.stringify(flowApp.getArgument(Inputs.TRAIN_DIRECTION));
-    user_subway_line_name = JSON.stringify(flowApp.getArgument(Inputs.SUBWAY_LINE_NAME));
+    user_train_direction = JSON.stringify(flowApp.getArgument(Inputs.TRAIN_DIRECTION)).replace(/"/g, "");
+    user_subway_line_name = JSON.stringify(flowApp.getArgument(Inputs.SUBWAY_LINE_NAME)).replace(/"/g, "");
 
     console.log('--------------------------------------------------------------------------------');
     console.log('!!! checkMTAStatus : ' + Inputs.TRAIN_DIRECTION + ' = ' + user_train_direction);
@@ -126,7 +133,11 @@ exports.mtaStatus = (req, res) => {
     console.log('--------------------------------------------------------------------------------');
 
     let checkUserStationsPromise = new Promise((resolve, reject) => {
-      //Test user id
+      /**
+       * Test user id
+       * Firebase Realtime DB contains a stations object with test userId 'device-12345'
+       * https://home-mta-status.firebaseio.com/userstations/device-12345
+       */
       //let userId = 'device-12345';
       App.checkUserStations(userId, resolve, reject);
     });
@@ -139,7 +150,8 @@ exports.mtaStatus = (req, res) => {
 
       if(userStations){
         //console.log('mtaStatus : checkMTAStatus');
-        flowApp.tell('Checking status now');
+        getArrivalTime();
+        
       }else{
         requestPermission(flowApp);
       }
