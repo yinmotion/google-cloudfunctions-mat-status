@@ -3,6 +3,7 @@ service: home-mta-status # NOTE: Don't put the word "google" in here
 provider:
   name: google
   runtime: nodejs
+  timeout: 240s
   project: home-mta-status
   # the path to the credentials file needs to be absolute
   credentials: ~/.gcloud/Google Home MTA Status-keys.json
@@ -35,6 +36,7 @@ package:
 functions:
   first:
     handler: mtaStatus
+    timeout: 120s
     events:
       - http: path
 

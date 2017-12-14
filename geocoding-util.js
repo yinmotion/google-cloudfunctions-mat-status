@@ -60,8 +60,11 @@ var GeocodingUtil = {
         .then((stationsByBorough) => {
             console.log('GeocodingUtil.getGeoCode : getStationByBoroughPromise : stationsByBorough length '+ stationsByBorough.length);
             
-            getDistance(stationsByBorough, resolve, reject);
-            
+            //*
+            return new Promise((resolve, reject) => {
+                getDistance(stationsByBorough, resolve, reject);
+            });
+            //*/
         })
         .then((stationsSortedByDistance) => {
             console.log('GeocodingUtil.getGeoCode : getStationByBoroughPromise : stationsSortedByDistance length ' + stationsSortedByDistance.length);
@@ -121,68 +124,69 @@ var GeocodingUtil = {
         }
 
         function getDistance(aStations, resolve, reject) {
-            console.log("getDistance");
+            //console.log("getDistance");
 
             /**
              * FOR DEV ONLY
              * Skip Google Maps distance request
              */
 
-            resolve(test_stations_sorted);
-            return;
+            //resolve(test_stations_sorted);
+            //return;
             /**** End of skip */
 
-
-            if (index < aStations.length) {
-                currStation = aStations[index];
+            _.delay(function(){resolve(test_stations_sorted)}, 15000);
+            
+            
+            // if (index < aStations.length) {
+            //     currStation = aStations[index];
                 
-                let requestSettings = {
-                    method: 'GET',
-                    url: distanceAPIurl + "&origins=" + formattedAddress + "&destinations=" + currStation.latLng + "&key=" + mapsAPIkey,
-                    json: true,
-                    resolveWithFullResponse: true
-                };
+            //     let requestSettings = {
+            //         method: 'GET',
+            //         url: distanceAPIurl + "&origins=" + formattedAddress + "&destinations=" + currStation.latLng + "&key=" + mapsAPIkey,
+            //         json: true,
+            //         resolveWithFullResponse: true
+            //     };
 
-                console.log(requestSettings.url);
-                //return;
+            //     console.log('getDistance : ' + requestSettings.url);
 
-                rp(requestSettings)
-                .then((response) => {
-                    //console.log(response);
-                    if(response.statusCode == 200) {
-                        let result = response.body.rows[0].elements[0]
-                        if (result.status === 'OK') {
-                            //distance in miles
-                            currStation.distance = result.distance.text.split(' ')[0];
-                            currStation.duration = result.duration.text;
-                            /**
-                             * Pick station within the user station radius
-                             * For storing in user station DB
-                             */
-                            if(currStation.distance<=userStationRadius){
-                                let newStation = _.pick(currStation, ['stopID', 'distance', 'duration']);
-                                console.log('newStation = ' + JSON.stringify(newStation, null, '\t'));
-                                stations_sorted.push(newStation);
-                            }
-                            index++;
-                            getDistance(aStations, resolve, reject);
-                        } else {
-                            console.log('distance error '+JSON.stringify(result));
-                        }
-                    }
-                })
-                .catch((reason) => {
-                    console.log(reason);
-                });
+            //     rp(requestSettings)
+            //     .then((response) => {
+            //         //console.log(response);
+            //         if(response.statusCode == 200) {
+            //             let result = response.body.rows[0].elements[0]
+            //             if (result.status === 'OK') {
+            //                 //distance in miles
+            //                 currStation.distance = result.distance.text.split(' ')[0];
+            //                 currStation.duration = result.duration.text;
+            //                 /**
+            //                  * Pick station within the user station radius
+            //                  * For storing in user station DB
+            //                  */
+            //                 if(currStation.distance<=userStationRadius){
+            //                     let newStation = _.pick(currStation, ['stopID', 'distance', 'duration']);
+            //                     console.log('newStation = ' + JSON.stringify(newStation, null, '\t'));
+            //                     stations_sorted.push(newStation);
+            //                 }
+            //                 index++;
+            //                 getDistance(aStations, resolve, reject);
+            //             } else {
+            //                 console.log('distance error '+JSON.stringify(result));
+            //             }
+            //         }
+            //     })
+            //     .catch((reason) => {
+            //         console.log(reason);
+            //     });
 
-            }else{
-                console.log('get distance completed');
-                stations_sorted.sort(compare);
-                let stationsJSON =  JSON.stringify(stations_sorted, null, '\t');
-                console.log('stations = ' + stationsJSON);
+            // }else{
+            //     console.log('get distance completed');
+            //     stations_sorted.sort(compare);
+            //     let stationsJSON =  JSON.stringify(stations_sorted, null, '\t');
+            //     //console.log('stations = ' + stationsJSON);
 
-                resolve(stations_sorted);
-            }
+            //     resolve(stations_sorted);
+            // }
         }
 
     },
