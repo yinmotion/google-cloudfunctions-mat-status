@@ -10,7 +10,6 @@ const App = require('./app');
 
 const Actions = {
   WELCOME_INTENT : 'input.welcome',
-  REQUEST_PERMISSION_ACTION: 'request_permission',
   CHECK_MTA_STATUS : 'check_mta_status',
   DEFAULT_FALLBACK: 'input.unknown',
   GET_ADDRESS: 'get_address',
@@ -44,7 +43,6 @@ exports.mtaStatus = (req, res) => {
 
   actionMap.set(Actions.CHECK_MTA_STATUS, checkMTAStatus);
   actionMap.set(Actions.WELCOME_INTENT, welcomeIntent);
-  actionMap.set(Actions.REQUEST_PERMISSION_ACTION, requestPermission);
   actionMap.set(Actions.GET_ADDRESS, onGetAddress);
   //actionMap.set(Actions.INPUT_SUBWAY_LINE, inputSubwayLine);
 
@@ -58,7 +56,7 @@ exports.mtaStatus = (req, res) => {
       console.log('user id = ' + userId);
     }
 
-    flowApp.ask('Hi, which train and what direction do you want to check?');
+    flowApp.ask('Hi, which train and what direction would you like to check?');
     //requestPermission(flowApp);
   };
 
@@ -85,7 +83,9 @@ exports.mtaStatus = (req, res) => {
       //*
       
       getArrivalTime();
-
+      setTimeout(function(){
+        flowApp.tell("I'm getting subway stations close to your location for the first time, please ask me again to check the train status in 2 mins.")
+      }, 4900);
       //*/
     }else{
       flowApp.tell("I can't find any station near you");  
